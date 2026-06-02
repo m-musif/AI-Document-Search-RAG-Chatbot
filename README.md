@@ -40,3 +40,16 @@ AI-Document-Search-RAG-Chatbot/
 ├── .env.example
 ├── .gitignore
 └── README.md
+## Screenshots
+
+### Upload PDF
+
+![Upload PDF](docs/screenshots/upload.png)
+
+### Answer Generation
+
+![Answer Generation](docs/screenshots/answer.png)
+
+### Source References
+
+![Source References](docs/screenshots/source.png)
