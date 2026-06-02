@@ -40,6 +40,8 @@ AI-Document-Search-RAG-Chatbot/
 ├── .env.example
 ├── .gitignore
 └── README.md
+```
+
 ## Screenshots
 
 ### Upload PDF
