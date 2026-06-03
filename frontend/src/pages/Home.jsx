@@ -55,7 +55,7 @@ function Home() {
   };
 
   const handleAskQuestion = async () => {
-    if (!question) {
+    if (!question.trim()) {
       return;
     }
 
@@ -131,8 +131,18 @@ function Home() {
         )}
 
         {selectedFile && (
-          <div className="mt-3 text-sm text-blue-600 font-medium">
-            Selected File: {selectedFile.name}
+          <div className="mt-4 border border-blue-200 bg-blue-50 rounded-xl p-4">
+            <p className="font-semibold text-blue-700">
+              📄 {selectedFile.name}
+            </p>
+
+            <p className="text-sm text-gray-700 mt-1">
+              📦 Size: {(selectedFile.size / 1024).toFixed(2)} KB
+            </p>
+
+            <p className="text-sm text-green-600 mt-1">
+              ✅ Ready to Upload
+            </p>
           </div>
         )}
 
@@ -175,8 +185,17 @@ function Home() {
           <h2 className="text-2xl font-semibold mb-4">Chat History</h2>
 
           {chatHistory.length === 0 && (
-            <div className="border border-gray-200 rounded-xl p-5 bg-gray-50 min-h-[150px] text-gray-500">
-              Your AI-generated answers will appear here...
+            <div className="border border-dashed border-gray-300 rounded-xl p-8 bg-gray-50 text-center">
+              <p className="text-2xl mb-2">💬</p>
+
+              <p className="font-semibold text-gray-700">
+                No conversations yet
+              </p>
+
+              <p className="text-gray-500 mt-2">
+                Upload a PDF and ask questions to start chatting with your
+                document.
+              </p>
             </div>
           )}
 
