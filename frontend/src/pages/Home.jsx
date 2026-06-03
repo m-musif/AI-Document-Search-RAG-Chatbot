@@ -8,13 +8,29 @@ function Home() {
   const [isUploading, setIsUploading] = useState(false);
   const [isAsking, setIsAsking] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
-const chatEndRef = useRef(null);
+  const chatEndRef = useRef(null);
 
-useEffect(() => {
-  chatEndRef.current?.scrollIntoView({
-    behavior: "smooth",
-  });
-}, [chatHistory]);
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [chatHistory]);
+
+  const downloadAnswer = (text) => {
+    const element = document.createElement("a");
+
+    const file = new Blob([text], {
+      type: "text/plain",
+    });
+
+    element.href = URL.createObjectURL(file);
+    element.download = "answer.txt";
+
+    document.body.appendChild(element);
+    element.click();
+
+    document.body.removeChild(element);
+  };
 
   const handleUpload = async () => {
     if (!selectedFile) {
@@ -173,7 +189,6 @@ useEffect(() => {
                 <p className="text-sm font-semibold text-blue-600">Question</p>
                 <p className="text-gray-800">{chat.question}</p>
               </div>
-<div ref={chatEndRef}></div>
 
               <div className="mb-4">
                 <p className="text-sm font-semibold text-green-600">Answer</p>
@@ -182,12 +197,21 @@ useEffect(() => {
                 </p>
               </div>
 
-              <button
-                onClick={() => navigator.clipboard.writeText(chat.answer)}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 mb-4"
-              >
-                Copy Answer
-              </button>
+              <div className="flex gap-3 flex-wrap mb-4">
+                <button
+                  onClick={() => navigator.clipboard.writeText(chat.answer)}
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+                >
+                  Copy Answer
+                </button>
+
+                <button
+                  onClick={() => downloadAnswer(chat.answer)}
+                  className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
+                >
+                  Download Answer
+                </button>
+              </div>
 
               {chat.sources.length > 0 && (
                 <div>
@@ -204,6 +228,8 @@ useEffect(() => {
               )}
             </div>
           ))}
+
+          <div ref={chatEndRef}></div>
         </div>
       </div>
     </div>
