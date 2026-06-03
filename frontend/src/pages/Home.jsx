@@ -251,8 +251,11 @@ function Home() {
           <div ref={chatEndRef}></div>
         </div>
       </div>
+
+      <div className="mt-8 text-center text-gray-500 text-sm">
+        Built with React, FastAPI, FAISS, and RAG Architecture
+      </div>
     </div>
   );
 }
-
 export default Home;
