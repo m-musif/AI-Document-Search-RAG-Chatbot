@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { uploadPDF, askQuestion } from "../services/api";
 
 function Home() {
@@ -8,6 +8,13 @@ function Home() {
   const [isUploading, setIsUploading] = useState(false);
   const [isAsking, setIsAsking] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
+const chatEndRef = useRef(null);
+
+useEffect(() => {
+  chatEndRef.current?.scrollIntoView({
+    behavior: "smooth",
+  });
+}, [chatHistory]);
 
   const handleUpload = async () => {
     if (!selectedFile) {
@@ -166,6 +173,7 @@ function Home() {
                 <p className="text-sm font-semibold text-blue-600">Question</p>
                 <p className="text-gray-800">{chat.question}</p>
               </div>
+<div ref={chatEndRef}></div>
 
               <div className="mb-4">
                 <p className="text-sm font-semibold text-green-600">Answer</p>
