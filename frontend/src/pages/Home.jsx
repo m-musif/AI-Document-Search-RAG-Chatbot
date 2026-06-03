@@ -5,10 +5,9 @@ function Home() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadMessage, setUploadMessage] = useState("");
   const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [isAsking, setIsAsking] = useState(false);
-  const [sources, setSources] = useState([]);
+  const [chatHistory, setChatHistory] = useState([]);
 
   const handleUpload = async () => {
     if (!selectedFile) {
@@ -34,21 +33,36 @@ function Home() {
 
   const handleAskQuestion = async () => {
     if (!question) {
-      setAnswer("Please write a question first.");
       return;
     }
 
+    const currentQuestion = question;
+
     try {
       setIsAsking(true);
-      setAnswer("Thinking...");
 
-      const result = await askQuestion(question);
+      const result = await askQuestion(currentQuestion);
 
-      setAnswer(result.answer);
-      setSources(result.sources || []);
+      setChatHistory((prevHistory) => [
+        ...prevHistory,
+        {
+          question: currentQuestion,
+          answer: result.answer,
+          sources: result.sources || [],
+        },
+      ]);
+
+      setQuestion("");
       console.log(result);
     } catch (error) {
-      setAnswer("Failed to get answer.");
+      setChatHistory((prevHistory) => [
+        ...prevHistory,
+        {
+          question: currentQuestion,
+          answer: "Failed to get answer.",
+          sources: [],
+        },
+      ]);
       console.error(error);
     } finally {
       setIsAsking(false);
@@ -126,8 +140,7 @@ function Home() {
           <button
             onClick={() => {
               setQuestion("");
-              setAnswer("");
-              setSources([]);
+              setChatHistory([]);
             }}
             className="mt-4 ml-3 bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700"
           >
@@ -136,34 +149,53 @@ function Home() {
         </div>
 
         <div className="mt-8">
-          <h2 className="text-2xl font-semibold mb-4">Answer</h2>
+          <h2 className="text-2xl font-semibold mb-4">Chat History</h2>
 
-          <div className="mb-3">
-            <button
-              onClick={() => navigator.clipboard.writeText(answer)}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
-            >
-              Copy Answer
-            </button>
-          </div>
-
-          <div className="border border-gray-200 rounded-xl p-5 bg-gray-50 min-h-[150px] max-h-[300px] overflow-y-auto whitespace-pre-wrap shadow-sm text-gray-800 leading-relaxed">
-            {answer || "Your AI-generated answer will appear here..."}
-          </div>
-
-          {sources.length > 0 && (
-            <div className="mt-4">
-              <h3 className="font-semibold text-lg mb-2">Sources</h3>
-
-              <div className="border border-gray-200 rounded-xl p-4 bg-white max-h-[200px] overflow-y-auto text-sm">
-                {sources.map((source, index) => (
-                  <p key={index} className="mb-2">
-                    • {source}
-                  </p>
-                ))}
-              </div>
+          {chatHistory.length === 0 && (
+            <div className="border border-gray-200 rounded-xl p-5 bg-gray-50 min-h-[150px] text-gray-500">
+              Your AI-generated answers will appear here...
             </div>
           )}
+
+          {chatHistory.map((chat, index) => (
+            <div
+              key={index}
+              className="mb-6 border border-gray-200 rounded-xl p-5 bg-gray-50 shadow-sm"
+            >
+              <div className="mb-4">
+                <p className="text-sm font-semibold text-blue-600">Question</p>
+                <p className="text-gray-800">{chat.question}</p>
+              </div>
+
+              <div className="mb-4">
+                <p className="text-sm font-semibold text-green-600">Answer</p>
+                <p className="whitespace-pre-wrap text-gray-800 leading-relaxed">
+                  {chat.answer}
+                </p>
+              </div>
+
+              <button
+                onClick={() => navigator.clipboard.writeText(chat.answer)}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 mb-4"
+              >
+                Copy Answer
+              </button>
+
+              {chat.sources.length > 0 && (
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">Sources</h3>
+
+                  <div className="border border-gray-200 rounded-xl p-4 bg-white max-h-[200px] overflow-y-auto text-sm">
+                    {chat.sources.map((source, sourceIndex) => (
+                      <p key={sourceIndex} className="mb-2">
+                        • {source}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>
